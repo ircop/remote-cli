@@ -15,6 +15,8 @@ You can ReadUntil(pattern string) - read incoming data until it matched your pat
 You can call Cmd(string) - it will send your data to remote and read output until it matched default pattern.
 
 
+**Note:** this tool also strips out all escape sequences (like colors), because they often makes impossible to parse output with scripts.
+
 # Some examples
 
 
@@ -48,6 +50,7 @@ func main() {
 ```
 
 Output:
+
 ![Output](https://i.imgur.com/pUC97PI.png)
 
 
@@ -72,4 +75,29 @@ Output:
 ```
 
 Output:
+
 ![Output](https://i.imgur.com/EB4nozo.png)
+
+
+## Ssh to linux host and execute some command
+
+```
+	cli := remote_cli.New(remote_cli.CliTypeSsh, "10.10.10.10", 22, "login", "password", `(?msi:(~ \$|#)\s+$)`, 3)
+
+	err := cli.Connect()
+	if err != nil {
+		panic(err)
+	}
+	
+	out, err := cli.Cmd("ls /var -l")
+	if err != nil {
+		fmt.Printf(out)
+		panic(err)
+	}
+	fmt.Printf("%s\n", out)
+```
+
+Output:
+
+![Output](https://i.imgur.com/ypW108c.png)
+
