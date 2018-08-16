@@ -29,7 +29,8 @@ type CliDummy interface {
 	WriteRaw(bytes []byte) error
 	// Open connection
 	Open(host string, port int) error
-	// Login logs in on device if needed (for ssh it's just dummy func)
+	// Close closes the connection
+	Close()
 }
 
 // Cli struct
@@ -75,12 +76,16 @@ func New(cliType int, ip string, port int, login string, password string, prompt
 // Connect method calls dial methods from underlying cli implementations (telnet/ssh).
 // Also here we registering pagination callbacks if it was not disabled earlier with DisablePagination.
 func (c *Cli) Connect() error {
-	// todo: this should be optional
 	if c.pagination {
 		c.preparePagination()
 	}
 
 	return c.CliHandler.Open(c.ip, c.port)
+}
+
+// Close closes the connection if it's still opened
+func (c *Cli) Close() {
+	c.CliHandler.Close()
 }
 
 // DisablePagination disables pagination regexp checks, which are enabled by default (see preparePagination).
