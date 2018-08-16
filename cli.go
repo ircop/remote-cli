@@ -31,6 +31,8 @@ type CliDummy interface {
 	Open(host string, port int) error
 	// Close closes the connection
 	Close()
+	// GetBuffer returns current buffer from reader as a string
+	GetBuffer() string
 }
 
 // Cli struct
@@ -43,7 +45,10 @@ type Cli struct {
 	prompt			string
 	timeout			int
 
+	dlinkPagination	bool
 	pagination		bool
+	paging			bool
+	pagingBuf		[]string
 
 	// CliHandler is downstream implementation for telnet/ssh communications.
 	// All commands listed in CliDummy interface should be called via this CliHandler
@@ -113,12 +118,18 @@ func (c *Cli) DisablePagination() {
 	c.pagination = false
 }
 
+// Enable dlink pagination: it consumes much resources...
+func (c *Cli) DlinkPagination() {
+	c.dlinkPagination = true
+}
+
 
 // These are just wrappers around underlying cli methods to avoid double class call hierarchy (i.e. we can
 // call`cli.Cmd()` instead of `cli.CliHandler.Cmd()`). But are you still able to call underlying methods directly.
 
 // Cmd sends given data and returns resulting output and/or error
 func (c *Cli) Cmd(cmd string) (string, error) {
+	c.paging = false
 	return c.CliHandler.Cmd(cmd)
 }
 
