@@ -63,6 +63,18 @@ func New(cliType int, ip string, port int, login string, password string, prompt
 		pagination:true,
 	}
 
+	if c.port == 0 {
+		if c.ctype == CliTypeSsh {
+			c.port = 22
+		}
+		if c.ctype == CliTypeTelnet {
+			c.port = 23
+		}
+	}
+	if c.timeout == 0 {
+		c.timeout = 3
+	}
+
 	if cliType == CliTypeTelnet {
 		c.CliHandler = tclient.New(timeout, login, password, c.prompt)
 	}
