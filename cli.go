@@ -100,6 +100,11 @@ func (c *Cli) Close() {
 	c.CliHandler.Close()
 }
 
+// SetPrompt allows you to change prompt after initialization
+func (c *Cli) SetPrompt(prompt string) {
+	c.CliHandler.SetPrompt(prompt)
+}
+
 // DisablePagination disables pagination regexp checks, which are enabled by default (see preparePagination).
 // With pagination checks (as well as with any regex callbacks) readers are trying to match every new recieved data
 // with one or multiple regexps, which may consume additional resources.
