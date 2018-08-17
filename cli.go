@@ -68,6 +68,10 @@ func New(cliType int, ip string, port int, login string, password string, prompt
 		pagination:true,
 	}
 
+	if c.prompt == "" {
+		c.prompt = `(?msi:[\$%#>]$)`
+	}
+
 	if c.port == 0 {
 		if c.ctype == CliTypeSsh {
 			c.port = 22
