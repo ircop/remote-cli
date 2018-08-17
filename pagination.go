@@ -18,7 +18,6 @@ func (c *Cli) preparePagination() {
 	if c.dlinkPagination {
 		// DLink pagination
 		c.CliHandler.RegisterCallback(`(?msi:CTRL\+C.+?a A[Ll][Ll]\s*)`, func() {
-			fmt.Printf("MATCHED DLINK PAGING")
 			c.CliHandler.WriteRaw([]byte{'a'})
 		})
 
