@@ -1,7 +1,5 @@
 package remote_cli
 
-import "fmt"
-
 // Here we will prepare various callbacks for handling pagination output.
 // So lets add most recent callbacks.
 func (c *Cli) preparePagination() {
