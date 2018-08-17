@@ -45,7 +45,6 @@ type Cli struct {
 	prompt			string
 	timeout			int
 
-	dlinkPagination	bool
 	pagination		bool
 	paging			bool
 	pagingBuf		[]string
@@ -120,11 +119,6 @@ func (c *Cli) SetPrompt(prompt string) {
 // DisablePagination should be called before Connect() to take effect.
 func (c *Cli) DisablePagination() {
 	c.pagination = false
-}
-
-// Enable dlink pagination: it consumes much resources...
-func (c *Cli) DlinkPagination() {
-	c.dlinkPagination = true
 }
 
 
