@@ -3,6 +3,9 @@ package remote_cli
 import (
 	"github.com/ircop/tclient"
 	"github.com/ircop/sshclient"
+	"regexp"
+	"github.com/pkg/errors"
+	"fmt"
 )
 
 const (
@@ -35,6 +38,11 @@ type CliDummy interface {
 	GetBuffer() string
 }
 
+type errorPattern struct {
+	Re				*regexp.Regexp
+	Description		string
+}
+
 // Cli struct
 type Cli struct {
 	ctype			int
@@ -48,6 +56,7 @@ type Cli struct {
 	pagination		bool
 	paging			bool
 	pagingBuf		[]string
+	errorPatterns	[]errorPattern
 
 	// CliHandler is downstream implementation for telnet/ssh communications.
 	// All commands listed in CliDummy interface should be called via this CliHandler
@@ -65,6 +74,7 @@ func New(cliType int, ip string, port int, login string, password string, prompt
 		timeout:timeout,
 		ctype:cliType,
 		pagination:true,
+		errorPatterns:make([]errorPattern, 0),
 	}
 
 	if c.prompt == "" {
@@ -124,11 +134,21 @@ func (c *Cli) DisablePagination() {
 
 // These are just wrappers around underlying cli methods to avoid double class call hierarchy (i.e. we can
 // call`cli.Cmd()` instead of `cli.CliHandler.Cmd()`). But are you still able to call underlying methods directly.
-
 // Cmd sends given data and returns resulting output and/or error
 func (c *Cli) Cmd(cmd string) (string, error) {
 	c.paging = false
-	return c.CliHandler.Cmd(cmd)
+	result, err := c.CliHandler.Cmd(cmd)
+	if err != nil {
+		return result, err
+	}
+
+	for _, pattern := range c.errorPatterns {
+		if pattern.Re.Match([]byte(result)) {
+			return result, fmt.Errorf("Error: %s", pattern.Description)
+		}
+	}
+	
+	return result, nil
 }
 
 // ReadUntil reads data until given pattern matched and returns result output and/or error.
@@ -141,6 +161,21 @@ func (c *Cli) ReadUntil(waitfor string) (string, error) {
 // Useful for pagination on various devices.
 func (c *Cli) RegisterCallback(pattern string, callback func()) error {
 	return c.CliHandler.RegisterCallback(pattern, callback)
+}
+
+// RegisterErrorPattern allows you to register regex pattern, which indicates error in final output.
+// For example, something like '% Bad IP address or host name% Unknown command or computer name, or unable to find computer address' on Cisco
+// Or 'Available commands' on DLink
+// Patterns used only in Cmd()
+func (c *Cli) RegisterErrorPattern(pattern string, description string) error {
+	re, err := regexp.Compile(pattern)
+	if err != nil {
+		return errors.Wrap(err, "RegisterErrorPattern: cannot compile pattern")
+	}
+
+	c.errorPatterns = append(c.errorPatterns, re)
+
+	return nil
 }
 
 // GlobalTimeout allows you to set global timeout value manually. Default is
