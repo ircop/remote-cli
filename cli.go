@@ -57,6 +57,7 @@ type Cli struct {
 	paging			bool
 	pagingBuf		[]string
 	errorPatterns	[]errorPattern
+	cache			map[string]string
 
 	// CliHandler is downstream implementation for telnet/ssh communications.
 	// All commands listed in CliDummy interface should be called via this CliHandler
@@ -75,6 +76,7 @@ func New(cliType int, ip string, port int, login string, password string, prompt
 		ctype:cliType,
 		pagination:true,
 		errorPatterns:make([]errorPattern, 0),
+		cache:make(map[string]string),
 	}
 
 	if c.prompt == "" {
@@ -136,6 +138,11 @@ func (c *Cli) DisablePagination() {
 // call`cli.Cmd()` instead of `cli.CliHandler.Cmd()`). But are you still able to call underlying methods directly.
 // Cmd sends given data and returns resulting output and/or error
 func (c *Cli) Cmd(cmd string) (string, error) {
+
+	if cached, ok := c.cache[cmd]; ok {
+		return cached, nil
+	}
+
 	c.paging = false
 	result, err := c.CliHandler.Cmd(cmd)
 	if err != nil {
@@ -147,7 +154,9 @@ func (c *Cli) Cmd(cmd string) (string, error) {
 			return result, fmt.Errorf("Error: %s", pattern.Description)
 		}
 	}
-	
+
+	c.cache[cmd] = result
+
 	return result, nil
 }
 
