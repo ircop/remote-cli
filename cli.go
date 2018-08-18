@@ -182,7 +182,7 @@ func (c *Cli) RegisterErrorPattern(pattern string, description string) error {
 		return errors.Wrap(err, "RegisterErrorPattern: cannot compile pattern")
 	}
 
-	c.errorPatterns = append(c.errorPatterns, re)
+	c.errorPatterns = append(c.errorPatterns, errorPattern{Re:re,Description:description})
 
 	return nil
 }
