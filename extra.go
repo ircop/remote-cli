@@ -8,8 +8,10 @@ func (c *Cli) handleExtraChars(output string) string {
 		// remove THIS and PREVIOUS character
 		// decrement i by 2 (2 chars removed)
 		if bytes[i] == 8 && i > 1 {
-			bytes = append(bytes[:i-1], bytes[i+1:]...)
-			i -= 2
+			bytes = append(bytes[:i], bytes[i+1:]...)
+			i--
+			bytes = append(bytes[:i], bytes[i+1:]...)
+			i--
 		}
 	}
 
