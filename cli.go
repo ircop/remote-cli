@@ -149,6 +149,8 @@ func (c *Cli) Cmd(cmd string) (string, error) {
 		return result, err
 	}
 
+	result = c.handleExtraChars(result)
+
 	for _, pattern := range c.errorPatterns {
 		if pattern.Re.Match([]byte(result)) {
 			return result, fmt.Errorf("Error: %s", pattern.Description)
