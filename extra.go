@@ -3,17 +3,18 @@ package remote_cli
 func (c *Cli) handleExtraChars(output string) string {
 
 	bytes := []byte(output)
-	// find backspaces
+	newBytes := []byte{}
+	// find backspaces, remove them and prev.chars
 	for i := range bytes {
-		// remove THIS and PREVIOUS character
-		// decrement i by 2 (2 chars removed)
-		if bytes[i] == 8 && i > 1 {
-			bytes = append(bytes[:i], bytes[i+1:]...)
-			i--
-			bytes = append(bytes[:i], bytes[i+1:]...)
-			i--
+		if bytes[i] == 8 {
+			if i == 1 {
+				continue
+			}
+			newBytes = newBytes[:len(newBytes)-1]
+			continue
 		}
+		newBytes = append(newBytes, bytes[i])
 	}
 
-	return string(bytes)
+	return string(newBytes)
 }
