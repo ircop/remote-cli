@@ -4,7 +4,7 @@ package remote_cli
 // So lets add most recent callbacks.
 func (c *Cli) preparePagination() {
 	// Cisco ' --More-- ':
-	c.CliHandler.RegisterCallback(`(?msi:^ --More-- )`, func(){
+	c.CliHandler.RegisterCallback(`(?msi:^ --More--)`, func(){
 			c.CliHandler.WriteRaw([]byte{' '})
 		})
 
@@ -20,8 +20,6 @@ func (c *Cli) continuousPager() {
 		return
 	}
 	c.paging = true
-	//fmt.Printf("MATCHED PAGING\n")
-	//c.CliHandler.WriteRaw([]byte{' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'q'})
 
 	for i := 0; i < 6; i++ {
 		c.CliHandler.WriteRaw([]byte{' '})
