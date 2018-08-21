@@ -19,6 +19,8 @@ type CliDummy interface {
 	ReadUntil(waitfor string) (string,error)
 	// SetPrompt allows you to change prompt without re-creating ssh client
 	SetPrompt(prompt string)
+	// You may need to change password for enable (because prompt is same as login)
+	SetPassword(pw string)
 	// Cmd is the same as ReadUntil, but pattern is default prompt, defined earlier
 	Cmd(cmd string) (string, error)
 	// RegisterCallback allows you to register some regex with callback, which will be called on regex match.
@@ -118,6 +120,11 @@ func (c *Cli) Connect() error {
 // Close closes the connection if it's still opened
 func (c *Cli) Close() {
 	c.CliHandler.Close()
+}
+
+// You may need to change password for enable (because prompt is same as login)
+func (c *Cli) SetPassword(pw string) {
+	c.CliHandler.SetPassword(pw)
 }
 
 // SetPrompt allows you to change prompt after initialization
