@@ -107,6 +107,20 @@ func New(cliType int, ip string, port int, login string, password string, prompt
 	return &c
 }
 
+// SetLoginPrompt - change default login prompt
+func (c *Cli) SetLoginPrompt(prompt string) {
+	c.RegisterCallback(prompt, func() {
+		c.Write([]byte(c.login))
+	})
+}
+
+// SetPasswordPrompt - change default password prompt
+func (c *Cli) SetPasswordPrompt(prompt string) {
+	c.RegisterCallback(prompt, func() {
+		c.Write([]byte(c.password))
+	})
+}
+
 // Connect method calls dial methods from underlying cli implementations (telnet/ssh).
 // Also here we registering pagination callbacks if it was not disabled earlier with DisablePagination.
 func (c *Cli) Connect() error {
