@@ -85,6 +85,7 @@ type Cli struct {
 	// CliHandler is downstream implementation for telnet/ssh communications.
 	// All commands listed in CliDummy interface should be called via this CliHandler
 	CliHandler		CliDummy
+	connected		bool
 }
 
 // New creates new instance of CLI basing on CLI type given.
@@ -159,12 +160,20 @@ func (c *Cli) Connect() error {
 		c.preparePagination()
 	}
 
-	return c.CliHandler.Open(c.ip, c.port)
+	err := c.CliHandler.Open(c.ip, c.port) ; if err != nil {
+		return err
+	} else {
+		c.connected = true
+		return nil
+	}
 }
 
 // Close closes the connection if it's still opened
 func (c *Cli) Close() {
-	c.CliHandler.Close()
+	if c.connected {
+		c.CliHandler.Close()
+		c.connected = false
+	}
 }
 
 // You may need to change password for enable (because prompt is same as login)
