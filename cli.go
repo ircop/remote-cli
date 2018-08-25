@@ -13,6 +13,26 @@ const (
 	CliTypeSsh = 2
 )
 
+type CliInterface interface {
+	Connect() error
+	Close()
+	GetLogin() string
+	SetLogin(string)
+	SetLoginPrompt(string)
+	SetPasswordPrompt(string)
+	SetPassword(string)
+	SetPrompt(string)
+	DisablePagination()
+	Cmd(string) (string,error)
+	ReadUntil(string) (string,error)
+	RegisterCallback(string, func()) error
+	RegisterErrorPattern(string,string) error
+	GlobalTimeout(int)
+	Write([]byte) error
+	WriteRaw([]byte) error
+	DlinkPagination()
+}
+
 // Cli is interface wrapper around telnet/ssh remote-cli subtypes.
 type CliDummy interface {
 	// ReadUntil reads data until given pattern matches
