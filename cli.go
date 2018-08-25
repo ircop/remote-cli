@@ -54,6 +54,7 @@ type Cli struct {
 	password		string
 	prompt			string
 	timeout			int
+	globalTimeout	int
 
 	pagination		bool
 	paging			bool
@@ -75,6 +76,7 @@ func New(cliType int, ip string, port int, login string, password string, prompt
 		password:password,
 		prompt:prompt,
 		timeout:timeout,
+		globalTimeout:timeout * 4,
 		ctype:cliType,
 		pagination:true,
 		errorPatterns:make([]errorPattern, 0),
@@ -105,6 +107,15 @@ func New(cliType int, ip string, port int, login string, password string, prompt
 	}
 
 	return &c
+}
+
+// GetLogin
+func (c *Cli) GetLogin() string {
+	return c.login
+}
+// SetLogin
+func (c *Cli) SetLogin(login string) {
+	c.login = login
 }
 
 // SetLoginPrompt - change default login prompt
@@ -163,6 +174,9 @@ func (c *Cli) Cmd(cmd string) (string, error) {
 	if cached, ok := c.cache[cmd]; ok {
 		return cached, nil
 	}
+
+	// set this every cmd call, not once
+	c.GlobalTimeout(c.globalTimeout)
 
 	c.paging = false
 	result, err := c.CliHandler.Cmd(cmd)
