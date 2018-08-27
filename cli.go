@@ -39,6 +39,10 @@ type CliDummy interface {
 	ReadUntil(waitfor string) (string,error)
 	// SetPrompt allows you to change prompt without re-creating ssh client
 	SetPrompt(prompt string)
+	// SetLoginPrompt
+	SetLoginPrompt(prompt string)
+	// SetLogin for cli instance
+	SetLogin(login string)
 	// You may need to change password for enable (because prompt is same as login)
 	SetPassword(pw string)
 	// Cmd is the same as ReadUntil, but pattern is default prompt, defined earlier
@@ -124,7 +128,7 @@ func New(cliType int, ip string, port int, login string, password string, prompt
 		c.CliHandler = tclient.New(timeout, login, password, c.prompt)
 	}
 	if cliType == CliTypeSsh {
-		c.CliHandler = sshclient.New(timeout, login, password, prompt)
+		c.CliHandler = sshclient.New(timeout, login, password, c.prompt)
 	}
 
 	return &c
@@ -137,13 +141,15 @@ func (c *Cli) GetLogin() string {
 // SetLogin
 func (c *Cli) SetLogin(login string) {
 	c.login = login
+	c.CliHandler.SetLogin(login)
 }
 
 // SetLoginPrompt - change default login prompt
 func (c *Cli) SetLoginPrompt(prompt string) {
-	c.RegisterCallback(prompt, func() {
-		c.Write([]byte(c.login))
-	})
+	c.CliHandler.SetLoginPrompt(prompt)
+	//c.RegisterCallback(prompt, func() {
+	//	c.Write([]byte(c.login))
+	//})
 }
 
 // SetPasswordPrompt - change default password prompt
