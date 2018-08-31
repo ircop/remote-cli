@@ -7,6 +7,7 @@ func (c *Cli) preparePagination() {
 	c.CliHandler.RegisterCallback(`(?msi:^ --More--)`, func(){
 			c.CliHandler.WriteRaw([]byte{' '})
 		})
+	//(?msi:^\s+ ---- More ----)
 
 	// Juniper '--more--'
 	c.CliHandler.RegisterCallback(`(?msi:^---\(more.*?\)---)`, func() {
@@ -32,5 +33,6 @@ func (c *Cli) DlinkPagination() {
 	c.CliHandler.RegisterCallback(`(?msi:CTRL\+C.+?a A[Ll][Ll]\s*)`, func() {
 		c.CliHandler.WriteRaw([]byte{'a'})
 	})
-	c.CliHandler.RegisterCallback(`(?msi:CTRL\+C.+?[^\n]+Refresh([^\n]+)?\n$)`, c.continuousPager)
+
+	c.CliHandler.RegisterCallback(`(?msi:CTRL\+C.+?[^\n]+Refresh([^\n]+)?(\n)?$)`, c.continuousPager)
 }
