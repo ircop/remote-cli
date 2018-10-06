@@ -1,5 +1,7 @@
 package remote_cli
 
+import "time"
+
 // Here we will prepare various callbacks for handling pagination output.
 // So lets add most recent callbacks.
 func (c *Cli) preparePagination() {
@@ -22,8 +24,9 @@ func (c *Cli) continuousPager() {
 	}
 	c.paging = true
 
-	for i := 0; i < 18; i++ {
+	for i := 0; i < 20; i++ {
 		c.CliHandler.WriteRaw([]byte{' '})
+		time.Sleep(time.Millisecond * 50)
 	}
 	c.CliHandler.WriteRaw([]byte{'Q'})
 }
