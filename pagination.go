@@ -22,7 +22,7 @@ func (c *Cli) continuousPager() {
 	}
 	c.paging = true
 
-	for i := 0; i < 6; i++ {
+	for i := 0; i < 18; i++ {
 		c.CliHandler.WriteRaw([]byte{' '})
 	}
 	c.CliHandler.WriteRaw([]byte{'Q'})
