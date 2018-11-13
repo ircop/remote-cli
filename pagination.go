@@ -33,7 +33,8 @@ func (c *Cli) continuousPager() {
 
 // Enable dlink pagination: it consumes much resources...
 func (c *Cli) DlinkPagination() {
-	c.CliHandler.RegisterCallback(`(?msi:CTRL\+C.+?a A[Ll][Ll]\s*)`, func() {
+//	c.CliHandler.RegisterCallback(`(?msi:CTRL\+C.+?a A[Ll][Ll]\s*)`, func() {
+	c.CliHandler.RegisterCallback(`(?msi:CTRL\+C.+?a A[Ll]\s*)`, func() {
 		c.CliHandler.WriteRaw([]byte{'a'})
 	})
 
