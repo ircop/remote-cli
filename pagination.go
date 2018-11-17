@@ -38,5 +38,6 @@ func (c *Cli) DlinkPagination() {
 		c.CliHandler.WriteRaw([]byte{'a'})
 	})
 
-	c.CliHandler.RegisterCallback(`(?msi:CTRL\+C.+?[^\n]+Refresh([^\n]+)?(\n)?$)`, c.continuousPager)
+	//c.CliHandler.RegisterCallback(`(?msi:CTRL\+C.+?[^\n]+Refresh([^\n]+)?(\n)?$)`, c.continuousPager)
+	c.CliHandler.RegisterCallback(`(?msi:CTRL\+C.+?[^\n]+Refres)`, c.continuousPager)
 }
