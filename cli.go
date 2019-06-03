@@ -162,6 +162,10 @@ func (c *Cli) SetPasswordPrompt(prompt string) {
 // Connect method calls dial methods from underlying cli implementations (telnet/ssh).
 // Also here we registering pagination callbacks if it was not disabled earlier with DisablePagination.
 func (c *Cli) Connect() error {
+	if c.pagination {
+		c.preparePagination()
+	}
+
 	err := c.CliHandler.Open(c.ip, c.port) ; if err != nil {
 		return err
 	} else {
